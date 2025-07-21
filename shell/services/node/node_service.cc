@@ -22,6 +22,7 @@
 #include "shell/common/node_bindings.h"
 #include "shell/common/node_includes.h"
 #include "shell/services/node/parent_port.h"
+#include "shell/utility/ai/utility_ai_manager.h"
 
 #if !IS_MAS_BUILD()
 #include "shell/common/crash_keys.h"
@@ -119,6 +120,8 @@ void NodeService::Initialize(
       std::move(params->url_loader_factory),
       mojo::Remote(std::move(params->host_resolver)),
       params->use_network_observer_from_url_loader_factory);
+
+  UtilityAIManager::Create(std::move(params->ai_manager));
 
   js_env_ = std::make_unique<JavascriptEnvironment>(node_bindings_->uv_loop());
 

@@ -1534,6 +1534,26 @@ v8::Local<v8::Value> Session::ClearData(gin_helper::ErrorThrower thrower,
   return promise_handle;
 }
 
+void Session::RegisterLocalAIHandler(
+    gin_helper::ErrorThrower thrower,
+    gin_helper::Handle<UtilityProcessWrapper> handler) {
+  // TODO - Full implementation
+  auto* prefs = SessionPreferences::FromBrowserContext(browser_context());
+  DCHECK(prefs);
+
+  prefs->SetLocalAIHandler(handler.get());
+}
+
+void Session::UnregisterLocalAIHandler(
+    gin_helper::ErrorThrower thrower,
+    gin_helper::Handle<UtilityProcessWrapper> handler) {
+  // TODO
+  auto* prefs = SessionPreferences::FromBrowserContext(browser_context());
+  DCHECK(prefs);
+
+  prefs->SetLocalAIHandler(nullptr);
+}
+
 #if BUILDFLAG(ENABLE_BUILTIN_SPELLCHECKER)
 base::Value Session::GetSpellCheckerLanguages() {
   return browser_context_->prefs()
@@ -1811,6 +1831,9 @@ void Session::FillObjectTemplate(v8::Isolate* isolate,
       .SetMethod("setCodeCachePath", &Session::SetCodeCachePath)
       .SetMethod("clearCodeCaches", &Session::ClearCodeCaches)
       .SetMethod("clearData", &Session::ClearData)
+      .SetMethod("_registerLocalAIHandler", &Session::RegisterLocalAIHandler)
+      .SetMethod("_unregisterLocalAIHandler",
+                 &Session::UnregisterLocalAIHandler)
       .SetProperty("cookies", &Session::Cookies)
       .SetProperty("extensions", &Session::Extensions)
       .SetProperty("netLog", &Session::NetLog)

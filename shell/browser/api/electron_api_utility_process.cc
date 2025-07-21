@@ -33,6 +33,7 @@
 #include "shell/common/v8_util.h"
 #include "third_party/blink/public/common/messaging/message_port_descriptor.h"
 #include "third_party/blink/public/common/messaging/transferable_message_mojom_traits.h"
+#include "third_party/blink/public/mojom/ai/ai_manager.mojom.h"
 #include "third_party/blink/public/mojom/blob/blob.mojom.h"
 
 #if BUILDFLAG(IS_POSIX)
@@ -233,6 +234,10 @@ UtilityProcessWrapper::UtilityProcessWrapper(
   params->use_network_observer_from_url_loader_factory =
       create_network_observer;
 
+  // TODO - Needs to actually be hooked up on this side
+  // TODO - Probably move this to a different method on node_service_remote_?
+  params->ai_manager = ai_manager_remote_.BindNewPipeAndPassReceiver();
+
   node_service_remote_->Initialize(std::move(params),
                                    receiver_.BindNewPipeAndPassRemote());
 }
@@ -326,6 +331,7 @@ void UtilityProcessWrapper::CloseConnectorPort() {
 
 void UtilityProcessWrapper::Shutdown(uint64_t exit_code) {
   node_service_remote_.reset();
+  ai_manager_remote_.reset();
   HandleTermination(exit_code);
 }
 

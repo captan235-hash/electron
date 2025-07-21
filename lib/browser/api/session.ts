@@ -2,7 +2,7 @@ import { fetchWithSession } from '@electron/internal/browser/api/net-fetch';
 import { addIpcDispatchListeners } from '@electron/internal/browser/ipc-dispatch';
 import * as deprecate from '@electron/internal/common/deprecate';
 
-import { net } from 'electron/main';
+import { net, type UtilityProcess } from 'electron/main';
 
 const { fromPartition, fromPath, Session } = process._linkedBinding('electron_browser_session');
 const { isDisplayMediaSystemPickerAvailable } = process._linkedBinding('electron_browser_desktop_capturer');
@@ -110,6 +110,14 @@ Session.prototype.removeExtension = deprecate.moveAPI(
   'session.removeExtension',
   'session.extensions.removeExtension'
 );
+
+Session.prototype.registerLocalAIHandler = function (handler: UtilityProcess) {
+  return this._registerLocalAIHandler((handler as any)._unwrapHandle());
+};
+
+Session.prototype.unregisterLocalAIHandler = function () {
+  return this._unregisterLocalAIHandler();
+};
 
 export default {
   fromPartition,

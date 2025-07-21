@@ -9,6 +9,7 @@
 
 #include "base/files/file_path.h"
 #include "base/supports_user_data.h"
+#include "shell/browser/api/electron_api_utility_process.h"
 #include "shell/browser/preload_script.h"
 
 namespace content {
@@ -16,6 +17,10 @@ class BrowserContext;
 }
 
 namespace electron {
+
+namespace api {
+class UtilityProcessWrapper;
+}
 
 class SessionPreferences : public base::SupportsUserData::Data {
  public:
@@ -30,6 +35,16 @@ class SessionPreferences : public base::SupportsUserData::Data {
 
   bool HasServiceWorkerPreloadScript();
 
+  api::UtilityProcessWrapper* GetLocalAIHandler() const {
+    return local_ai_handler_;
+  }
+
+  bool HasLocalAIHandler() const { return local_ai_handler_ != nullptr; }
+
+  void SetLocalAIHandler(api::UtilityProcessWrapper* handler) {
+    local_ai_handler_ = handler;
+  }
+
  private:
   SessionPreferences();
 
@@ -37,6 +52,7 @@ class SessionPreferences : public base::SupportsUserData::Data {
   static int kLocatorKey;
 
   std::vector<PreloadScript> preload_scripts_;
+  raw_ptr<api::UtilityProcessWrapper> local_ai_handler_;
 };
 
 }  // namespace electron
