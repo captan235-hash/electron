@@ -1,6 +1,6 @@
 const handleESModule = (loader: ElectronInternal.ModuleLoader) => () => {
   const value = loader();
-  if (value.__esModule && value.default) return value.default;
+  if (value && value.__esModule && 'default' in value) return (value as any).default;
   return value;
 };
 
